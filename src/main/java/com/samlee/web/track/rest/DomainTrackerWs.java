@@ -10,6 +10,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -21,6 +22,7 @@ public class DomainTrackerWs
 
   @Path("{domain}")
   @GET
+  @Produces(MediaType.APPLICATION_JSON)
   public Response saveDomain(@PathParam("domain") String domain) {
     
     if (domainReferrals.containsKey(domain)) {
@@ -31,15 +33,14 @@ public class DomainTrackerWs
     return Response.ok().build();
   }
 
-  @Path("topThree")
   @GET
   @Produces(MediaType.APPLICATION_JSON)
-  public Map<String, Long> getTopThreeDomain() {
-    return getTopThreeDomains(domainReferrals);
+  public Map<String, Long> getDomainsByCountDesc(@QueryParam("limit") int limit) {
+    return getDomainsByCountDesc(domainReferrals, limit > 0 ? limit : 3);
   }
-  
-  public <K, V extends Comparable<? super V>> Map<K, V> getTopThreeDomains(Map<K, V> map) {
-    return map.entrySet().stream().sorted(Map.Entry.comparingByValue(Collections.reverseOrder())).limit(3)
+
+  private <K, V extends Comparable<? super V>> Map<K, V> getDomainsByCountDesc(Map<K, V> map, int limit) {
+    return map.entrySet().stream().sorted(Map.Entry.comparingByValue(Collections.reverseOrder())).limit(limit)
         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
   }
 
