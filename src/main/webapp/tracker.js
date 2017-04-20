@@ -7,10 +7,7 @@ angular.module('tracker-app', [])
 
     $scope.saveDomain = function() {
         $http.get(path + '/' + $scope.domainReferral).
-    		then(function(response) {
-    			var test = response;
-    			var test2 = test;
-    		});
+    		then(function(response) {});
         getTopThreeDomains($scope);
     };
         
